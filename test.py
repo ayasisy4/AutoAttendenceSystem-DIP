@@ -10,13 +10,13 @@ import excelManipulation as excel
 import imageEnhancing as imgENHC
 
 # get the image that We  here consider as an attendnce photo
-testImage = cv2.imread('/Users/Aya/AutoAttendenceSystem-DIP/TestImages/alex.jpg')
-preImage4 = imgENHC.HistogramEqualization(testImage)
+testImage = cv2.imread('/Users/Aya/AutoAttendenceSystem-DIP/TestImages/aya.jpg')
+# preImage4 = imgENHC.HistogramEqualization(testImage)
 
 # 
 
 #detect face in this image 
-detectedFaces, grayImage = fr.facedetetection(preImage4)
+detectedFaces, grayImage = fr.facedetetection(testImage)
 print (detectedFaces)
 
 # for(x,y,w,h ) in detectedFaces:
@@ -68,16 +68,17 @@ def recogize_label_faces():
         label,confidence= facerecongizer.predict(roi_gray)
         print("confidnece: ", confidence)
         print("label: ", label)
-        fr.draw_rect(preImage4,face)
+        fr.draw_rect(testImage,face)
         predictedName= names[label]
         if(confidence < 37 ):
             continue
-        fr.put_text(preImage4,predictedName,x,y)
+        fr.put_text(testImage,predictedName,x,y)
         labels.append(label)
         students.append(names[label])
         totalstudents = set(students)
         justlabels = set(labels)
         print('student Recognised : ',students,totalstudents,justlabels)
+   
     for i in justlabels:
         print('label count : ', labels.count(i))
         print("names of i is ", names[i])
@@ -94,6 +95,6 @@ preImage3= imgENHC.DoG(testImage)
 resized_img= cv2.resize(testImage,(1200,1200))
 cv2.startWindowThread()
 cv2.namedWindow("preview")
-cv2.imshow("face detection result", preImage4)
+cv2.imshow("face detection result", testImage)
 cv2.waitKey()
 cv2.destroyAllWindows()
