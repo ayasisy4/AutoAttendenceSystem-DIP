@@ -12,7 +12,7 @@ today = date.today()
 # dd/mm/YY
 d1 = today.strftime("%d/%m/%Y")
 
-testImage = cv2.imread('/Users/Aya/AutoAttendenceSystem-DIP/TestImages/alluni.jpg')
+testImage = cv2.imread('/Users/Aya/AutoAttendenceSystem-DIP/TestImages/aya.jpg')
 detectedFaces, grayImage = fr.facedetetection(testImage)
 print (detectedFaces)
 
@@ -60,35 +60,34 @@ def dataGetter():
         for row in rows:
             names[int(row[0])] =row[1]
 
-def attended(studentName):
+def attended(recognizedstudent):
     with open('data.csv','r') as f :
         data = csv.reader(f)
-        row0 = next(data)
-        row0.append(d1)
-        print(row0)
-        rows = list(data)
-        print('this is all data before any modi',rows)
-       
+        # row0 = next(data)
+        # row0.append(d1)
+        # print(row0)
+        rows = list(data)    
+        print('kkkkkkkkkk',rows[0])
+        for row in rows:
+            if(row[1]=='Name'):
+                row.append(d1)
+            else:
+                row.append('0')
+        print('this is all data before any modi',row)
 
         for row in rows:
             print("row name ,", row[1])
-            if row[1] == studentName:
-                row.append('1')
-                finalrows.append(row)
-                print("row after appednig attendce ,", row)
-            else:
-                row.append('0')
-                     
+            if(row[1] in recognizedstudent ):
+                row[-1]='1'
+    print("row after appednig attendce ,", rows)
 
-                
-            
-        # totalrows = set(c)
-        print('this is fina data',finalrows)
-
-def writeincsv (latestdata): 
-        with open('data.csv','w') as g:
+    with open('data.csv','w') as g:
             writer = csv.writer(g,lineterminator='\n')
-            writer.writerows(latestdata)
+            writer.writerows(rows)
+# def writeincsv (latestdata): 
+#         with open('data.csv','w') as g:
+#             writer = csv.writer(g,lineterminator='\n')
+#             writer.writerows(latestdata)
                     
 def updateExcel():
         with open('data.csv') as f:
@@ -112,11 +111,11 @@ for face in detectedFaces:
     (x,y,w,h)= face
     roi_gray= grayImage[y:y+h,x:x+h]
     label,confidence= facerecongizer.predict(roi_gray)
-    # print("confidnece: ", confidence)
-    # print("label: ", label)
+    print("confidnece: ", confidence)
+    print("label: ", label)
     fr.draw_rect(testImage,face)
     predictedName= namemanual[label]
-    if(confidence < 117 ):
+    if(confidence < 37 ):
         continue
     fr.put_text(testImage,predictedName,x,y)
     labels.append(label)
@@ -127,12 +126,13 @@ for face in detectedFaces:
 for i in justlabels:
     print('label count : ', labels.count(i))
     print("names of i is ", names[i])
-    attended(names[i])
+    
+attended(totalstudents)
 
 
-writeincsv(finalrows)
+# writeincsv(finalrows)
 resized_img= cv2.resize(testImage,(1200,1200))
-# updateExcel()
+updateExcel()
 cv2.startWindowThread()
 cv2.namedWindow("preview")
 cv2.imshow("face detection result", resized_img)
